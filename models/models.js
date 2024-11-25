@@ -10,3 +10,7 @@ exports.fetchApiList = () =>{
     }  
     )
 }
+
+exports.fetchTopics = () =>{
+    return db.query(`SELECT * FROM topics`)
+}

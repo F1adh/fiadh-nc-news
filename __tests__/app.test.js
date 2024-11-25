@@ -20,3 +20,39 @@ describe("GET /api", () => {
       });
   });
 });
+describe("GET /api/topics", ()=>{
+  test("200: Responds with an array of topic objects, containing all database topic records", ()=>{
+    return request(app)
+    .get('/api/topics')
+    .expect(200)
+    .then(({body: {topics}})=>{
+      console.log(topics)
+      expect(topics).toEqual([
+        {
+          description: 'The man, the Mitch, the legend',
+          slug: 'mitch'
+        },
+        {
+          description: 'Not dogs',
+          slug: 'cats'
+        },
+        {
+          description: 'what books are made of',
+          slug: 'paper'
+        }
+      ])
+    })
+  })
+  
+  
+})
+describe("General errors", ()=>{
+  test("404: Responds with empty object when request is made to non-existing endpoint", ()=>{
+    return request(app)
+    .get('/idontexist')
+    .expect(404)
+    .then(({body})=>{
+      expect(body).toEqual({})
+    })
+  })
+})
