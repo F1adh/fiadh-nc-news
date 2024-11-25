@@ -1,4 +1,4 @@
-const { fetchApiList, fetchTopics } = require("../models/models")
+const { fetchApiList, fetchTopics, fetchArticleById } = require("../models/models")
 
 
 exports.getApi = (req, res, next) =>{
@@ -11,6 +11,16 @@ exports.getApi = (req, res, next) =>{
 
 exports.getTopics = (req, res, next) =>{
     return fetchTopics().then((queryResponse)=>{
-        res.status(200).send({topics: queryResponse.rows})
+        res.status(200).send({topics: queryResponse})
+    })
+}
+
+exports.getArticleByID = (req, res, next) =>{
+    
+    return fetchArticleById(req.params.article_id).then((queryResponse)=>{
+        res.status(200).send({article: queryResponse})
+    }).catch((err)=>{
+      
+        next(err)
     })
 }
