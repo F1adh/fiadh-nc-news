@@ -12,5 +12,19 @@ exports.fetchApiList = () =>{
 }
 
 exports.fetchTopics = () =>{
-    return db.query(`SELECT * FROM topics`)
+    return db.query(`SELECT * FROM topics`).then((dbResponse)=>{return dbResponse.rows})
+}
+
+exports.fetchArticleById = (articleId) => {
+    
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [articleId]).then((dbResponse)=>{ 
+        
+        if(dbResponse.rows.length===0){
+            throw ({code:404, msg:'Resource not found'})
+        }
+        else{
+          return dbResponse.rows[0]  
+        }
+        })
+        
 }
