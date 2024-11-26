@@ -1,4 +1,4 @@
-const { fetchApiList, fetchTopics, fetchArticleById } = require("../models/models")
+const { fetchApiList, fetchTopics, fetchArticleById, fetchAllArticles } = require("../models/models")
 
 
 exports.getApi = (req, res, next) =>{
@@ -22,5 +22,12 @@ exports.getArticleByID = (req, res, next) =>{
     }).catch((err)=>{
       
         next(err)
+    })
+}
+
+exports.getAllArticles = (req, res, next) =>{
+    return fetchAllArticles().then((queryResponse)=>{
+        console.log(queryResponse)
+        res.status(200).send({articles: queryResponse})
     })
 }
