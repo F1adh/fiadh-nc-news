@@ -63,7 +63,6 @@ describe("GET /api/articles/:article_id", ()=>{
     .get('/api/articles/1')
     .expect(200)
     .then(({body:{article}})=>{
-      console.log(article)
         expect(article).toEqual({
           article_id: 1,
           title: "Living in the shadow of a great man",
@@ -97,7 +96,7 @@ describe("GET /api/articles/:article_id", ()=>{
   */ 
 })
 
-describe.only("GET /api/articles", ()=>{
+describe("GET /api/articles", ()=>{
   test("200: Responds with array of article objects with required properties", ()=>{
     return request(app)
     .get('/api/articles')

@@ -27,7 +27,6 @@ exports.getArticleByID = (req, res, next) =>{
 
 exports.getAllArticles = (req, res, next) =>{
     return fetchAllArticles().then((queryResponse)=>{
-        console.log(queryResponse)
         res.status(200).send({articles: queryResponse})
     })
 }
