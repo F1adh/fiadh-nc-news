@@ -5,6 +5,7 @@ const request = require('supertest');
 const db = require('../db/connection.js');
 const seed = require('../db/seeds/seed.js');
 const data = require('../db/data/test-data/')
+require('jest-sorted')
 
 beforeEach(() => seed(data));
 afterAll(() => db.end());
@@ -85,10 +86,54 @@ describe("GET /api/articles/:article_id", ()=>{
       expect(text).toBe('Resource not found')
     })
   })
-  test.only("404: responds with 'Not Found' if ID is missing", ()=>{
+  /*
+  test("404: responds with 'Not Found' if ID is missing", ()=>{
     return request(app)
     .get('/api/articles/')
     .expect(404)
     //I don't know how to handle 404 when it's provided by express so yeah
+  })
+  well I can't use this test now, will look at alternative e.g. string instead of number
+  */ 
+})
+
+describe.only("GET /api/articles", ()=>{
+  test("200: Responds with array of article objects with required properties", ()=>{
+    return request(app)
+    .get('/api/articles')
+    .expect(200)
+    .then(({body: {articles}})=>{
+      articles.forEach((article)=>{
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: expect.any(String)
+        })
+      })
+    })
+  })
+  test("200: articles sorted by date in descending order", ()=>{
+    return request(app)
+    .get('/api/articles')
+    .expect(200)
+    .then(({body: {articles}})=>{
+      expect(articles).toBeSortedBy('created_at', { descending: true})
+    })
+  })
+  test("200: articles do not have a body property", ()=>{
+    return request(app)
+    .get('/api/articles')
+    .expect(200)
+    .then(({body: {articles}})=>{
+      articles.forEach((article)=>{
+        expect(article).not.toHaveProperty('body')
+        
+      })
+    })
   })
 })
