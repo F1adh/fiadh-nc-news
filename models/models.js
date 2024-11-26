@@ -38,9 +38,6 @@ GROUP BY articles.article_id, title, articles.article_id, topic, articles.create
 ORDER BY articles.created_at DESC;`).then((dbResponse)=>{ return dbResponse.rows})
 }
 
-/* SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, SUM(comments.article_id) AS comment_total
-FROM articles
-JOIN comments
-ON articles.article_id = comments.article_id
-GROUP BY articles.article_id;
-*/
+exports.fetchArticleComments = (articleId) =>{
+    return db.query(`SELECT * FROM comments WHERE article_id = $1`, [articleId]).then((dbResponse)=>{return dbResponse.rows})
+}
