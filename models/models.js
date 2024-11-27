@@ -1,5 +1,6 @@
 const db = require('../db/connection.js')
 const fs = require('fs/promises')
+const format = require('pg-format')
 
 exports.fetchApiList = () =>{
     //read endpoints.json
@@ -61,4 +62,30 @@ exports.fetchArticleComments = (articleId) =>{
            
             
         })
+}
+
+exports.checkUserExists = (username) => {
+    return db.query(`SELECT EXISTS (SELECT 1 FROM users WHERE username = $1);`, [username]).then((dbResponse)=>{
+        const {exists} = dbResponse.rows[0]
+      
+        if(exists===false){
+            
+            return Promise.reject({code:404, msg:'Not Found'})
+        }
+        else{
+            return Promise.resolve()
+        }
+    })
+}
+
+exports.insertComment = (articleId, comment) =>{
+    
+    const {username, body} = comment;
+    const values = [articleId, username, body]
+    const sql = format(`INSERT INTO comments (article_id, author, body) VALUES (%L) RETURNING *;`, values);
+    
+    return db.query(sql).then((dbResponse)=>{
+        
+        return dbResponse.rows[0].body
+    })
 }

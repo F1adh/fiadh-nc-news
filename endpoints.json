@@ -40,5 +40,14 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "inserts a new comment for selected article, returning new comment",
+    "queries": [{"username": "icellusedkars", "body": "Primus sucks"}],
+    "exampleResponse": {
+      "comments": [
+        "Primus sucks"
+      ]
+    }
   }
 }

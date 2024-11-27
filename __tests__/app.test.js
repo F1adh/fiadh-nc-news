@@ -82,7 +82,7 @@ describe("GET /api/articles/:article_id", ()=>{
     .expect(404)
     .then(({text})=>{
      
-      expect(text).toBe('Resource not found')
+      expect(text).toBe('Not Found')
     })
   })
   /*
@@ -136,7 +136,7 @@ describe("GET /api/articles", ()=>{
     })
   })
 })
-describe.only("GET /api/articles/:article_id/comments", ()=>{
+describe("GET /api/articles/:article_id/comments", ()=>{
   test("200: retrieves comments for given article_id with required properties", ()=>{
     return request(app)
     .get('/api/articles/1/comments')
@@ -176,6 +176,39 @@ describe.only("GET /api/articles/:article_id/comments", ()=>{
     .expect(200)
     .then(({body:{msg}})=>{
       expect(msg).toBe('No Comments')
+    })
+  })
+})
+describe("POST /api/articles/:article_id/comments", ()=>{
+  test("201: Add a comment for given article_id", ()=>{
+    const testBody = {username: 'icellusedkars', body: 'Primus sucks'}
+    return request(app)
+    .post('/api/articles/1/comments')
+    .send(testBody)
+    .expect(201)
+    .then(({text})=>{
+      expect(text).toBe('Primus sucks')
+    })
+  })
+
+  test("404: returns 'Not Found' if article_id doesn't exist", ()=>{
+    const testBody = {username: 'icellusedkars', body: 'Primus sucks'}
+    return request(app)
+    .post('/api/articles/1337/comments')
+    .send(testBody)
+    .expect(404)
+    .then(({text})=>{
+      expect(text).toBe('Not Found')
+    })
+  })
+  test("404: returns 'Not Found' if author doesn't exist", ()=>{
+    const testBody = {username: 'deceptacon', body: 'Who took the ram from the ramalamadingdong?'}
+    return request(app)
+    .post('/api/articles/1/comments')
+    .send(testBody)
+    .expect(404)
+    .then(({text})=>{
+      expect(text).toBe('Not Found')
     })
   })
 })
