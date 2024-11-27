@@ -1,4 +1,4 @@
-const { fetchApiList, fetchTopics, fetchArticleById, fetchAllArticles, fetchArticleComments, checkArticleExists, insertComment, checkUserExists, updateArticleVotes } = require("../models/models")
+const { fetchApiList, fetchTopics, fetchArticleById, fetchAllArticles, fetchArticleComments, checkArticleExists, insertComment, checkUserExists, updateArticleVotes, deleteComment, checkCommentExists } = require("../models/models")
 
 
 exports.getApi = (req, res, next) =>{
@@ -81,4 +81,18 @@ exports.patchArticle = (req, res, next) =>{
         res.status(200).send(newArticle)
     }).catch((err)=>{next(err)})
 
+}
+
+exports.removeComment = (req, res, next) =>{
+    const {comment_id} = req.params;
+
+   console.log(typeof comment_id, "<<")
+    const commentExists = checkCommentExists(comment_id)
+
+    const commentDeleted = deleteComment(comment_id)
+
+    return Promise.all([ commentExists, commentDeleted]).then((queryResponse)=>{
+        res.status(204).send({})
+    }).catch((err)=>{next(err)})
+    
 }

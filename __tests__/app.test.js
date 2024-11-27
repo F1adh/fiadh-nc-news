@@ -212,7 +212,7 @@ describe("POST /api/articles/:article_id/comments", ()=>{
     })
   })
 })
-describe.only("PATCH /api/articles/:article_id", ()=>{
+describe("PATCH /api/articles/:article_id", ()=>{
   test("200: increases votes by 1 for article corresponding with article_id, returning the updated article", ()=>{
     const testBody = {inc_votes: 1};
     return request(app)
@@ -281,6 +281,32 @@ describe.only("PATCH /api/articles/:article_id", ()=>{
     .expect(400)
     .then(({text})=>{
       expect(text).toBe('Please include a vote integer')
+    })
+  })
+})
+describe.only("DELETE /api/comments/:comment_id", ()=>{
+  test("204: deletes comment by comment_id, returning no content", ()=>{
+    return request(app)
+    .delete('/api/comments/1')
+    .expect(204)
+    .then(({body})=>{
+      expect(body).toEqual({})
+    })
+  })
+  test("404: returns 'Not Found' when comment_id doesn't exist", ()=>{
+    return request(app)
+    .delete('/api/comments/1337')
+    .expect(404)
+    .then(({text})=>{
+      expect(text).toBe('Not Found')
+    })
+  })
+  test("400: returns 'Please provide integer for comment_id' when provided a non-integer", ()=>{
+    return request(app)
+    .delete('/api/comments/one')
+    .expect(400)
+    .then(({text})=>{
+      expect(text).toBe('Please provide integer for comment_id')
     })
   })
 })

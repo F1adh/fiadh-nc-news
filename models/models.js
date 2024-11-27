@@ -99,3 +99,40 @@ exports.updateArticleVotes = (articleId, incVotes) =>{
     return db.query(`UPDATE articles SET votes = votes + $2 WHERE article_id = $1 RETURNING *;`, [articleId, incVotes])
     .then((dbResponse)=>{return dbResponse.rows[0]})
 }
+
+
+
+exports.checkCommentExists = (commentId) =>{
+   console.log(Number(commentId))
+    if(isNaN(Number(commentId))){
+         
+        return Promise.reject({code: 400, msg:'Please provide integer for comment_id'})
+    }
+    else{
+        
+        return db.query(`SELECT EXISTS (SELECT 1 FROM comments WHERE comment_id = $1);`, [commentId]).then((dbResponse)=>{
+            const {exists} = dbResponse.rows[0]
+        
+
+            if(exists===false){
+            
+           
+                    return Promise.reject({code:404, msg:'Not Found'})
+            
+            
+            }
+            else{
+                return Promise.resolve()
+            }
+        })
+    }
+}
+
+exports.deleteComment = (commentId) =>{
+
+    
+    
+        return db.query(`DELETE FROM comments WHERE comment_id = $1;`, [commentId]).then((dbResponse)=>{return dbResponse})
+    
+    
+}
