@@ -15,10 +15,8 @@ app.get('/api/articles', getAllArticles)
 app.get('/api/articles/:article_id/comments', getArticleComments)
 
 app.use((err, req, res, next)=>{
-    
-    if(err.msg === 'Resource not found'){
-       
-        res.status(404).send(err.msg)
+    if(err.code === 404){
+        res.status(err.code).send(err.msg)
     }
     
 })

@@ -20,7 +20,7 @@ exports.fetchArticleById = (articleId) => {
     return db.query(`SELECT * FROM articles WHERE article_id = $1`, [articleId]).then((dbResponse)=>{ 
         
         if(dbResponse.rows.length===0){
-            throw ({code:404, msg:'Resource not found'})
+            throw ({code:404, msg:'Not Found'})
         }
         else{
           return dbResponse.rows[0]  
@@ -38,6 +38,27 @@ GROUP BY articles.article_id, title, articles.article_id, topic, articles.create
 ORDER BY articles.created_at DESC;`).then((dbResponse)=>{ return dbResponse.rows})
 }
 
+exports.checkArticleExists = (articleId) =>{
+    return db.query(`SELECT EXISTS (SELECT 1 FROM articles WHERE article_id = $1);`, [articleId]).then((dbResponse)=>{
+        const {exists} = dbResponse.rows[0]
+      
+        if(exists===false){
+            
+            return Promise.reject({code:404, msg:'Not Found'})
+        }
+        else{
+            return Promise.resolve()
+        }
+    })
+    
+}
+
 exports.fetchArticleComments = (articleId) =>{
-    return db.query(`SELECT * FROM comments WHERE article_id = $1`, [articleId]).then((dbResponse)=>{return dbResponse.rows})
+    return db.query(`SELECT * FROM comments WHERE article_id = $1
+        ORDER BY created_at DESC;`, [articleId]).then((dbResponse)=>{
+                   
+            return dbResponse.rows
+           
+            
+        })
 }

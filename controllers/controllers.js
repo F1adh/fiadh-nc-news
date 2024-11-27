@@ -1,4 +1,4 @@
-const { fetchApiList, fetchTopics, fetchArticleById, fetchAllArticles, fetchArticleComments } = require("../models/models")
+const { fetchApiList, fetchTopics, fetchArticleById, fetchAllArticles, fetchArticleComments, checkArticleExists } = require("../models/models")
 
 
 exports.getApi = (req, res, next) =>{
@@ -32,7 +32,23 @@ exports.getAllArticles = (req, res, next) =>{
 }
 
 exports.getArticleComments = (req, res, next) =>{
-    return fetchArticleComments(req.params.article_id).then((queryResponse)=>{
-        res.status(200).send({comments: queryResponse})
-    })
+   const doesArticleExist= checkArticleExists(req.params.article_id)
+
+   const retrieveComments = fetchArticleComments(req.params.article_id)
+  
+
+   return Promise.all([doesArticleExist, retrieveComments]).then((queryResponse)=>{
+        const [,comments] = queryResponse
+        
+        if(comments.length === 0){
+            res.status(200).send({msg: 'No Comments'})
+        }
+        else{
+            res.status(200).send({comments})
+        }
+   }).catch((err)=>{
+    next(err)
+   })
+   
+   
 }
