@@ -1,4 +1,4 @@
-const { fetchApiList, fetchTopics, fetchArticleById, fetchAllArticles, fetchArticleComments, checkArticleExists, insertComment, checkUserExists } = require("../models/models")
+const { fetchApiList, fetchTopics, fetchArticleById, fetchAllArticles, fetchArticleComments, checkArticleExists, insertComment, checkUserExists, updateArticleVotes } = require("../models/models")
 
 
 exports.getApi = (req, res, next) =>{
@@ -67,4 +67,18 @@ exports.postComment = (req, res, next) =>{
         const [,,newComment] = queryResponse;
         res.status(201).send(newComment)
     }).catch((err)=>{next(err)})
+}
+
+exports.patchArticle = (req, res, next) =>{
+    const {article_id} = req.params;
+    const {inc_votes} = req.body
+
+    const doesArticleExist= checkArticleExists(article_id)
+    const updatedVoteArticle = updateArticleVotes(article_id, inc_votes)
+
+    return Promise.all([doesArticleExist, updatedVoteArticle]).then((queryResponse)=>{
+        const [,newArticle] = queryResponse
+        res.status(200).send(newArticle)
+    }).catch((err)=>{next(err)})
+
 }

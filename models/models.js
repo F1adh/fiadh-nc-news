@@ -89,3 +89,13 @@ exports.insertComment = (articleId, comment) =>{
         return dbResponse.rows[0].body
     })
 }
+
+exports.updateArticleVotes = (articleId, incVotes) =>{
+      
+    if(!incVotes || typeof incVotes !== 'number'){
+        return Promise.reject({code: 400, msg:'Please include a vote integer'})
+    }
+
+    return db.query(`UPDATE articles SET votes = votes + $2 WHERE article_id = $1 RETURNING *;`, [articleId, incVotes])
+    .then((dbResponse)=>{return dbResponse.rows[0]})
+}
