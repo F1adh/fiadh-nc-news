@@ -212,3 +212,75 @@ describe("POST /api/articles/:article_id/comments", ()=>{
     })
   })
 })
+describe.only("PATCH /api/articles/:article_id", ()=>{
+  test("200: increases votes by 1 for article corresponding with article_id, returning the updated article", ()=>{
+    const testBody = {inc_votes: 1};
+    return request(app)
+    .patch('/api/articles/1')
+    .send(testBody)
+    .expect(200)
+    .then(({body})=>{
+      expect(body).toEqual({
+        article_id: 1,
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: "2020-07-09T20:11:00.000Z",
+        votes: 101,
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+    })
+  })
+  test("200: decreases votes by 100 for article corresponding with article_id, returning the updated article", ()=>{
+    const testBody = {inc_votes: -100};
+    return request(app)
+    .patch('/api/articles/1')
+    .send(testBody)
+    .expect(200)
+    .then(({body})=>{
+      expect(body).toEqual({
+        article_id: 1,
+        title: "Living in the shadow of a great man",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence challenging",
+        created_at: "2020-07-09T20:11:00.000Z",
+        votes: 0,
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+      })
+    })
+  })
+  test("404: returns 'Not Found' if article_id doesn't exist", ()=>{
+    const testBody = {inc_votes: -100};
+    return request(app)
+    .patch('/api/articles/1337')
+    .send(testBody)
+    .expect(404)
+    .then(({text})=>{
+      expect(text).toBe('Not Found')
+    })
+  })
+  test("400: returns 'Please include a vote integer' if no votes are sent", ()=>{
+    const testBody = {};
+    return request(app)
+    .patch('/api/articles/1')
+    .send(testBody)
+    .expect(400)
+    .then(({text})=>{
+      expect(text).toBe('Please include a vote integer')
+    })
+  })
+  test("400: returns 'Please include a vote integer' if inc_votes is not an integer", ()=>{
+    const testBody = {inc_votes: 'one hundred'};
+    return request(app)
+    .patch('/api/articles/1')
+    .send(testBody)
+    .expect(400)
+    .then(({text})=>{
+      expect(text).toBe('Please include a vote integer')
+    })
+  })
+})
