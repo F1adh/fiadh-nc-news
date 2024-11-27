@@ -284,7 +284,7 @@ describe("PATCH /api/articles/:article_id", ()=>{
     })
   })
 })
-describe.only("DELETE /api/comments/:comment_id", ()=>{
+describe("DELETE /api/comments/:comment_id", ()=>{
   test("204: deletes comment by comment_id, returning no content", ()=>{
     return request(app)
     .delete('/api/comments/1')
@@ -307,6 +307,22 @@ describe.only("DELETE /api/comments/:comment_id", ()=>{
     .expect(400)
     .then(({text})=>{
       expect(text).toBe('Please provide integer for comment_id')
+    })
+  })
+})
+describe.only("GET /api/users", ()=>{
+  test("200: returns array of users with required properties", ()=>{
+    return request(app)
+    .get('/api/users')
+    .expect(200)
+    .then(({body:{users}})=>{
+      users.forEach((user)=>{
+        expect(user).toMatchObject({
+          username: expect.any(String),
+          name: expect.any(String),
+          avatar_url: expect.any(String)
+        })
+      })
     })
   })
 })
