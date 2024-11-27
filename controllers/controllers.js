@@ -1,4 +1,4 @@
-const { fetchApiList, fetchTopics, fetchArticleById, fetchAllArticles, fetchArticleComments, checkArticleExists, insertComment, checkUserExists, updateArticleVotes, deleteComment, checkCommentExists } = require("../models/models")
+const { fetchApiList, fetchTopics, fetchArticleById, fetchAllArticles, fetchArticleComments, checkArticleExists, insertComment, checkUserExists, updateArticleVotes, deleteComment, checkCommentExists, fetchUsers } = require("../models/models")
 
 
 exports.getApi = (req, res, next) =>{
@@ -95,4 +95,10 @@ exports.removeComment = (req, res, next) =>{
         res.status(204).send({})
     }).catch((err)=>{next(err)})
     
+}
+
+exports.getUsers = (req, res, next) =>{
+    return fetchUsers().then((queryResponse)=>{
+        res.status(200).send({users: queryResponse})
+    })
 }

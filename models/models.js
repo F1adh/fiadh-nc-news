@@ -136,3 +136,7 @@ exports.deleteComment = (commentId) =>{
     
     
 }
+
+exports.fetchUsers = ()=>{
+    return db.query(`SELECT * FROM users`).then((dbResponse)=>{return dbResponse.rows})
+}
