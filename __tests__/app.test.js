@@ -63,7 +63,6 @@ describe("GET /api/articles/:article_id", ()=>{
     .get('/api/articles/1')
     .expect(200)
     .then(({body:{article}})=>{
-      console.log(article)
         expect(article).toEqual({
           article_id: 1,
           title: "Living in the shadow of a great man",
@@ -97,7 +96,7 @@ describe("GET /api/articles/:article_id", ()=>{
   */ 
 })
 
-describe.only("GET /api/articles", ()=>{
+describe("GET /api/articles", ()=>{
   test("200: Responds with array of article objects with required properties", ()=>{
     return request(app)
     .get('/api/articles')
@@ -134,6 +133,49 @@ describe.only("GET /api/articles", ()=>{
         expect(article).not.toHaveProperty('body')
         
       })
+    })
+  })
+})
+describe.only("GET /api/articles/:article_id/comments", ()=>{
+  test("200: retrieves comments for given article_id with required properties", ()=>{
+    return request(app)
+    .get('/api/articles/1/comments')
+    .expect(200)
+    .then(({body: {comments}})=>{
+      comments.forEach((comment)=>{
+        expect(comment).toMatchObject({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: expect.any(String),
+          article_id: expect.any(Number),
+          body: expect.any(String)
+        })
+      })
+    })
+  })
+  test("200: comments should be ordered by date in descending order", ()=>{
+    return request(app)
+    .get('/api/articles/1/comments')
+    .expect(200)
+    .then(({body: {comments}})=>{
+      expect(comments).toBeSortedBy('created_at', {descending:true})
+    })
+  })
+  test("404: returns 'Not Found' for article_id without corresponding records ",()=>{
+    return request(app)
+    .get('/api/articles/1337/comments')
+    .expect(404)
+    .then(({text})=>{
+      expect(text).toBe('Not Found')
+    })
+  })
+  test("200: returns 'No Comments' for article_id with no corresponding comments", ()=>{ //200
+    return request(app)
+    .get('/api/articles/2/comments')
+    .expect(200)
+    .then(({body:{msg}})=>{
+      expect(msg).toBe('No Comments')
     })
   })
 })

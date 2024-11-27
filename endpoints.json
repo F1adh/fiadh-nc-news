@@ -25,5 +25,20 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of all comments for specified article",
+    "queries": ["6"],
+    "exampleResponse": {
+      "comments": [
+        {
+          "body": "This is a bad article name",
+          "votes": 1,
+          "author": "butter_bridge",
+          "article_id": 6,
+          "created_at": 1602433380000
+        }
+      ]
+    }
   }
 }
