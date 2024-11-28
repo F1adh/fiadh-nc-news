@@ -135,6 +135,9 @@ describe("GET /api/articles", ()=>{
       })
     })
   })
+  test("200: articles sorted", ()=>{
+    
+  })
 })
 describe("GET /api/articles/:article_id/comments", ()=>{
   test("200: retrieves comments for given article_id with required properties", ()=>{
@@ -310,7 +313,7 @@ describe("DELETE /api/comments/:comment_id", ()=>{
     })
   })
 })
-describe.only("GET /api/users", ()=>{
+describe("GET /api/users", ()=>{
   test("200: returns array of users with required properties", ()=>{
     return request(app)
     .get('/api/users')

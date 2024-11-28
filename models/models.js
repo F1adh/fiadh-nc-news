@@ -7,7 +7,7 @@ exports.fetchApiList = () =>{
     //ensure data parsed
     //return data
     return fs.readFile('endpoints.json', 'utf-8').then((fileData)=>{
-        return JSON.parse(fileData)
+        return JSON.parse(fileData);
     }  
     )
 }
@@ -29,8 +29,8 @@ exports.fetchArticleById = (articleId) => {
         })
         
 }
-
-exports.fetchAllArticles = () =>{
+//articles should be sorted by date in descending order
+exports.fetchAllArticles = (sortBy = 'articles.created_at', order='desc') =>{
     return db.query(`SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.article_id) AS comment_count
 FROM articles
 LEFT JOIN comments
