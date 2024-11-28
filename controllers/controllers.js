@@ -26,7 +26,8 @@ exports.getArticleByID = (req, res, next) =>{
 }
 
 exports.getAllArticles = (req, res, next) =>{
-    return fetchAllArticles().then((queryResponse)=>{
+    const {sort_by, order} = req.body
+    return fetchAllArticles(sort_by, order).then((queryResponse)=>{
         res.status(200).send({articles: queryResponse})
     })
 }

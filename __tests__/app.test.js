@@ -96,7 +96,7 @@ describe("GET /api/articles/:article_id", ()=>{
   */ 
 })
 
-describe("GET /api/articles", ()=>{
+describe.only("GET /api/articles", ()=>{
   test("200: Responds with array of article objects with required properties", ()=>{
     return request(app)
     .get('/api/articles')
@@ -136,7 +136,7 @@ describe("GET /api/articles", ()=>{
     })
   })
   test("200: articles sorted", ()=>{
-    
+
   })
 })
 describe("GET /api/articles/:article_id/comments", ()=>{
