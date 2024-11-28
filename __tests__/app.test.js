@@ -212,7 +212,7 @@ describe("POST /api/articles/:article_id/comments", ()=>{
     })
   })
 })
-describe.only("PATCH /api/articles/:article_id", ()=>{
+describe("PATCH /api/articles/:article_id", ()=>{
   test("200: increases votes by 1 for article corresponding with article_id, returning the updated article", ()=>{
     const testBody = {inc_votes: 1};
     return request(app)
