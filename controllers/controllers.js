@@ -26,10 +26,10 @@ exports.getArticleByID = (req, res, next) =>{
 }
 
 exports.getAllArticles = (req, res, next) =>{
-    const {sort_by, order} = req.body
+    const {sort_by, order} = req.query
     return fetchAllArticles(sort_by, order).then((queryResponse)=>{
         res.status(200).send({articles: queryResponse})
-    })
+    }).catch((err)=>{next(err)})
 }
 
 exports.getArticleComments = (req, res, next) =>{

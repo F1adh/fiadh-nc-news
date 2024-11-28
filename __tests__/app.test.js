@@ -96,7 +96,7 @@ describe("GET /api/articles/:article_id", ()=>{
   */ 
 })
 
-describe.only("GET /api/articles", ()=>{
+describe("GET /api/articles", ()=>{
   test("200: Responds with array of article objects with required properties", ()=>{
     return request(app)
     .get('/api/articles')
@@ -135,9 +135,41 @@ describe.only("GET /api/articles", ()=>{
       })
     })
   })
-  test("200: articles sorted", ()=>{
+  
+    test("200: articles sorted by votes in descending order", ()=>{
+      return request(app)
+      .get('/api/articles?sort_by=votes')
+      .expect(200)
+      .then(({body: {articles}})=>{
+        expect(articles).toBeSortedBy('votes', { descending: true})
+      })
+    })
+    test("200: articles sorted by date in ascending order", ()=>{
+      return request(app)
+      .get('/api/articles?order=ASC')
+      .expect(200)
+      .then(({body: {articles}})=>{
+        expect(articles).toBeSortedBy('created_at', { ascending: true})
+      })
+    })
+    test("200: articles sorted by votes in ascending order", ()=>{
+      return request(app)
+      .get('/api/articles?order=ASC&sort_by=votes')
+      .expect(200)
+      .then(({body: {articles}})=>{
+        expect(articles).toBeSortedBy('votes', { ascending: true})
+      })
+    })
+    test("400: returns 'Please provide a valid sort_by or order' on invalid queries", ()=>{
+      return request(app)
+      .get('/api/articles?order=cheese&sort_by=chalk')
+      .expect(400)
+      .then(({text})=>{
 
-  })
+        expect(text).toBe('Please provide a valid sort_by or order')
+      })
+    })
+  
 })
 describe("GET /api/articles/:article_id/comments", ()=>{
   test("200: retrieves comments for given article_id with required properties", ()=>{
