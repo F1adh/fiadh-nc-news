@@ -135,6 +135,9 @@ describe("GET /api/articles", ()=>{
       })
     })
   })
+  test("200: articles sorted", ()=>{
+    
+  })
 })
 describe("GET /api/articles/:article_id/comments", ()=>{
   test("200: retrieves comments for given article_id with required properties", ()=>{
