@@ -30,13 +30,23 @@ exports.fetchArticleById = (articleId) => {
         
 }
 //articles should be sorted by date in descending order
-exports.fetchAllArticles = (sortBy = 'articles.created_at', order='desc') =>{
-    return db.query(`SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.article_id) AS comment_count
-FROM articles
-LEFT JOIN comments
-ON articles.article_id = comments.article_id
-GROUP BY articles.article_id, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url
-ORDER BY articles.created_at DESC;`).then((dbResponse)=>{ return dbResponse.rows})
+exports.fetchAllArticles = (sortBy = 'created_at', order='DESC') =>{
+
+    const validSort = ['article_id', 'author', 'title', 'topic', 'created_at', 'votes', 'comment_count']
+    const validOrder = ['ASC', 'DESC']
+
+    if(!validSort.includes(sortBy) || !validOrder.includes(order)){
+        return Promise.reject({code:400, msg:'Please provide a valid sort_by or order'})
+    }
+
+    const queryStr = format(`SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.article_id) AS comment_count 
+        FROM articles 
+        LEFT JOIN comments 
+        ON articles.article_id = comments.article_id 
+        GROUP BY articles.article_id, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url 
+        ORDER BY %I %s;`, sortBy, order);
+
+    return db.query(queryStr).then((dbResponse)=>{ return dbResponse.rows})
 }
 
 exports.checkArticleExists = (articleId) =>{
