@@ -16,9 +16,10 @@ exports.getTopics = (req, res, next) =>{
 }
 
 exports.getArticleByID = (req, res, next) =>{
+    const {article_id} = req.params
     
-    return fetchArticleById(req.params.article_id).then((queryResponse)=>{
-        res.status(200).send({article: queryResponse})
+    return fetchArticleById(article_id, ).then((queryResponse)=>{
+        res.status(200).send({articles: queryResponse})
     }).catch((err)=>{
       
         next(err)
