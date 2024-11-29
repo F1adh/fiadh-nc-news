@@ -30,23 +30,42 @@ exports.fetchArticleById = (articleId) => {
         
 }
 //articles should be sorted by date in descending order
-exports.fetchAllArticles = (sortBy = 'created_at', order='DESC') =>{
+exports.fetchAllArticles = (sortBy = 'created_at', order='DESC', topic) =>{
 
+    const validTopics = ['mitch', 'cats']
     const validSort = ['article_id', 'author', 'title', 'topic', 'created_at', 'votes', 'comment_count']
     const validOrder = ['ASC', 'DESC']
+    let queryStr;
+   
 
     if(!validSort.includes(sortBy) || !validOrder.includes(order)){
-        return Promise.reject({code:400, msg:'Please provide a valid sort_by or order'})
+        return Promise.reject({code:400, msg:'Please provide a valid sort_by, order, or topic'})
     }
+    else if(topic){
+        if(!validTopics.includes(topic)){
+            return Promise.reject({code:400, msg:'Please provide a valid sort_by, order, or topic'})
+        }
+    }
+    
 
-    const queryStr = format(`SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.article_id) AS comment_count 
+    const queryStrStart = `SELECT articles.author, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url, COUNT(comments.article_id) AS comment_count 
         FROM articles 
         LEFT JOIN comments 
-        ON articles.article_id = comments.article_id 
-        GROUP BY articles.article_id, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url 
-        ORDER BY %I %s;`, sortBy, order);
+        ON articles.article_id = comments.article_id`
 
-    return db.query(queryStr).then((dbResponse)=>{ return dbResponse.rows})
+    const queryStrEnd = ` GROUP BY articles.article_id, title, articles.article_id, topic, articles.created_at, articles.votes, article_img_url 
+        ORDER BY %I %s;`
+
+    if(topic){
+        queryStr = format(queryStrStart + ` WHERE topic = %L` + queryStrEnd, topic, sortBy, order);
+    }
+    else{
+        queryStr = format(queryStrStart + queryStrEnd, sortBy, order);
+    }
+
+   
+
+    return db.query(queryStr).then((dbResponse)=>{ return dbResponse.rows}).catch((err)=>{console.log(err)})
 }
 
 exports.checkArticleExists = (articleId) =>{
@@ -113,7 +132,7 @@ exports.updateArticleVotes = (articleId, incVotes) =>{
 
 
 exports.checkCommentExists = (commentId) =>{
-   console.log(Number(commentId))
+   
     if(isNaN(Number(commentId))){
          
         return Promise.reject({code: 400, msg:'Please provide integer for comment_id'})

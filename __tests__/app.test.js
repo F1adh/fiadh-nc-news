@@ -160,13 +160,33 @@ describe("GET /api/articles", ()=>{
         expect(articles).toBeSortedBy('votes', { ascending: true})
       })
     })
-    test("400: returns 'Please provide a valid sort_by or order' on invalid queries", ()=>{
+    test("400: returns 'Please provide a valid sort_by, order, or topic' on invalid queries", ()=>{
       return request(app)
       .get('/api/articles?order=cheese&sort_by=chalk')
       .expect(400)
       .then(({text})=>{
 
-        expect(text).toBe('Please provide a valid sort_by or order')
+        expect(text).toBe('Please provide a valid sort_by, order, or topic')
+      })
+    })
+    test("200: provides results filtered by topic", ()=>{
+      return request(app)
+      .get('/api/articles?topic=cats')
+      .expect(200)
+      .then(({body:{articles}})=>{
+        articles.forEach((article)=>{
+          expect(article).toMatchObject({
+            topic: 'cats'
+          })
+        })
+      })
+    })
+    test("400: returns 'Please provide a valid sort_by, order, or topic' on invalid topic query", ()=>{
+      return request(app)
+      .get('/api/articles?topic=cheddar')
+      .expect(400)
+      .then(({text})=>{
+        expect(text).toBe('Please provide a valid sort_by, order, or topic')
       })
     })
   
