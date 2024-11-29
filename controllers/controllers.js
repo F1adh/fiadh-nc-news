@@ -26,8 +26,8 @@ exports.getArticleByID = (req, res, next) =>{
 }
 
 exports.getAllArticles = (req, res, next) =>{
-    const {sort_by, order} = req.query
-    return fetchAllArticles(sort_by, order).then((queryResponse)=>{
+    const {sort_by, order, topic} = req.query
+    return fetchAllArticles(sort_by, order, topic).then((queryResponse)=>{
         res.status(200).send({articles: queryResponse})
     }).catch((err)=>{next(err)})
 }
@@ -87,7 +87,7 @@ exports.patchArticle = (req, res, next) =>{
 exports.removeComment = (req, res, next) =>{
     const {comment_id} = req.params;
 
-   console.log(typeof comment_id, "<<")
+   
     const commentExists = checkCommentExists(comment_id)
 
     const commentDeleted = deleteComment(comment_id)
