@@ -18,13 +18,19 @@ exports.fetchTopics = () =>{
 
 exports.fetchArticleById = (articleId) => {
     
-    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [articleId]).then((dbResponse)=>{ 
+    
+    return db.query(`SELECT articles.author, articles.title, articles.body, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count 
+        FROM articles 
+        LEFT JOIN comments 
+        ON articles.article_id = comments.article_id 
+        WHERE articles.article_id = $1
+        GROUP BY articles.author, articles.title, articles.body, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url;`, [articleId]).then((dbResponse)=>{ 
         
         if(dbResponse.rows.length===0){
             throw ({code:404, msg:'Not Found'})
         }
         else{
-          return dbResponse.rows[0]  
+          return dbResponse.rows
         }
         })
         
